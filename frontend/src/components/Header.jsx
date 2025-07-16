@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { logout } from "../slices/authSlice";
 import SearchBox from "./SearchBox";
-import logo from "../assets/logo.png";
+import Logo from "./Logo";
 import { resetCart } from "../slices/cartSlice";
 
 const Header = () => {
@@ -34,7 +34,7 @@ const Header = () => {
       <Navbar bg="dark" variant="dark" expand="md" collapseOnSelect>
         <Container>
           <Navbar.Brand as={Link} to="/">
-            <img src={logo} alt="ProShop" /> ProShop
+            <Logo width="200" height="50" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">

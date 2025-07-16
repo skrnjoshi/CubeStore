@@ -9,7 +9,7 @@ import {
   createProductReview,
   getTopProducts,
 } from "../controllers/productController.js";
-import { protect, admin } from "../middleware/authMiddleware.js";
+import { protect, admin } from "../middleware/authMiddleWare.js";
 import checkObjectId from "../middleware/checkObjectId.js";
 
 router.route("/").get(getProducts).post(protect, admin, createProduct);
