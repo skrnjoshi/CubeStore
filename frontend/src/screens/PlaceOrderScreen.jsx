@@ -7,28 +7,34 @@ import Message from "../components/Message";
 import CheckOutSteps from "../components/CheckOutSteps";
 import Loader from "../components/Loader";
 import { useCreateOrderMutation } from "../slices/ordersApiSlice";
-import { clearCartItems } from "../slices/cartSlice";
+import { clearCartItems, cleanupCart } from "../slices/cartSlice";
 
 const PlaceOrderScreen = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const cart = useSelector((state) => state.cart);
+
+  // Filter out any null or undefined items
+  const validCartItems =
+    cart.cartItems?.filter((item) => item && item._id) || [];
 
   const [createOrder, { isLoading, error }] = useCreateOrderMutation();
 
   useEffect(() => {
+    // Cleanup cart on component mount
+    dispatch(cleanupCart());
+
     if (!cart.shippingAddress.address) {
       navigate("/shipping");
     } else if (!cart.paymentMethod) {
       navigate("/payment");
     }
-  }, [cart.paymentMethod, cart.shippingAddress.address, navigate]);
-
-  const dispatch = useDispatch();
+  }, [cart.paymentMethod, cart.shippingAddress.address, navigate, dispatch]);
   const placeOrderHandler = async () => {
     try {
       const res = await createOrder({
-        orderItems: cart.cartItems,
+        orderItems: validCartItems,
         shippingAddress: cart.shippingAddress,
         paymentMethod: cart.paymentMethod,
         itemsPrice: cart.itemsPrice,
@@ -67,12 +73,12 @@ const PlaceOrderScreen = () => {
 
             <ListGroup.Item>
               <h2>Order Items</h2>
-              {cart.cartItems.length === 0 ? (
+              {validCartItems.length === 0 ? (
                 <Message>Your cart is empty</Message>
               ) : (
                 <ListGroup variant="flush">
-                  {cart.cartItems.map((item, index) => (
-                    <ListGroup.Item key={index}>
+                  {validCartItems.map((item) => (
+                    <ListGroup.Item key={item._id}>
                       <Row>
                         <Col md={1}>
                           <Image
@@ -83,13 +89,11 @@ const PlaceOrderScreen = () => {
                           />
                         </Col>
                         <Col>
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
+                          <Link to={`/product/${item._id}`}>{item.name}</Link>
                         </Col>
                         <Col md={4}>
                           {item.qty} x ${item.price} = $
-                          {(item.qty * (item.price * 100)) / 100}
+                          {(item.qty * item.price).toFixed(2)}
                         </Col>
                       </Row>
                     </ListGroup.Item>

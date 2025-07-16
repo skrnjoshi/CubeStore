@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import {
   Row,
   Col,
@@ -11,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import Message from "../components/Message";
-import { addToCart, removeFromCart } from "../slices/cartSlice";
+import { addToCart, removeFromCart, cleanupCart } from "../slices/cartSlice";
 
 const CartScreen = () => {
   const navigate = useNavigate();
@@ -19,6 +20,14 @@ const CartScreen = () => {
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+
+  // Clean up cart on component mount
+  useEffect(() => {
+    dispatch(cleanupCart());
+  }, [dispatch]);
+
+  // Filter out any null or undefined items
+  const validCartItems = cartItems?.filter((item) => item && item._id) || [];
 
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
@@ -36,13 +45,13 @@ const CartScreen = () => {
     <Row>
       <Col md={8}>
         <h1 style={{ marginBottom: "20px" }}>Shopping Cart</h1>
-        {cartItems.length === 0 ? (
+        {validCartItems.length === 0 ? (
           <Message>
             Your cart is empty <Link to="/">Go Back</Link>
           </Message>
         ) : (
           <ListGroup variant="flush">
-            {cartItems.map((item) => (
+            {validCartItems.map((item) => (
               <ListGroup.Item key={item._id}>
                 <Row>
                   <Col md={2}>
@@ -87,11 +96,11 @@ const CartScreen = () => {
           <ListGroup variant="flush">
             <ListGroup.Item>
               <h2>
-                Subtotal ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
-                items
+                Subtotal (
+                {validCartItems.reduce((acc, item) => acc + item.qty, 0)}) items
               </h2>
               $
-              {cartItems
+              {validCartItems
                 .reduce((acc, item) => acc + item.qty * item.price, 0)
                 .toFixed(2)}
             </ListGroup.Item>
@@ -99,7 +108,7 @@ const CartScreen = () => {
               <Button
                 type="button"
                 className="btn-block"
-                disabled={cartItems.length === 0}
+                disabled={validCartItems.length === 0}
                 onClick={checkoutHandler}
               >
                 Proceed To Checkout

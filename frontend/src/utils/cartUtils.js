@@ -3,6 +3,9 @@ const addDecimal = (num) => {
 };
 
 export const updateCart = (state) => {
+  // Filter out any null or undefined items before calculations
+  state.cartItems = state.cartItems.filter((item) => item && item._id);
+
   // Calculate items price
   const itemsPrice = addDecimal(
     state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
