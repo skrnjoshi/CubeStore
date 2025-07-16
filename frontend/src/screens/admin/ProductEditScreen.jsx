@@ -9,6 +9,7 @@ import {
   useGetProductDetailsQuery,
   useUpdateProductMutation,
   useUploadProductImageMutation,
+  useGetProductsQuery,
 } from "../../slices/productsApiSlice";
 const ProductEditScreen = () => {
   const { id: productId } = useParams();
@@ -25,6 +26,9 @@ const ProductEditScreen = () => {
 
   const [uploadProductImage, { isLoading: loadingUpload }] =
     useUploadProductImageMutation();
+
+  // Get refetch function for product list to update cache after product update
+  const { refetch: refetchProductList } = useGetProductsQuery({});
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -60,6 +64,8 @@ const ProductEditScreen = () => {
         description,
       }).unwrap();
       toast.success("Product updated successfully");
+      // Refetch product list to ensure the list is updated
+      refetchProductList();
       navigate("/admin/productlist");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
