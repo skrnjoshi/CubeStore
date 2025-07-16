@@ -33,6 +33,7 @@ import UserListScreen from "./screens/admin/UserListScreen.jsx"; // Import UserL
 import UserEditScreen from "./screens/admin/UserEditScreen.jsx";
 import { HelmetProvider } from "@dr.pogodin/react-helmet"; // Import Helmet for SEO
 import ErrorPage from "./components/ErrorPage";
+import LoginRedirectHandler from "./components/LoginRedirectHandler";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -77,6 +78,8 @@ const router = createBrowserRouter(
         <Route path="/admin/userlist" element={<UserListScreen />} />
         <Route path="/admin/userlist/:id/edit" element={<UserEditScreen />} />
       </Route>
+      {/* Catch problematic login routes and redirect properly */}
+      <Route path="/login/:redirect" element={<LoginRedirectHandler />} />
     </Route>
   )
 );

@@ -13,10 +13,12 @@ import {
 import { FaTrash } from "react-icons/fa";
 import Message from "../components/Message";
 import { addToCart, removeFromCart, cleanupCart } from "../slices/cartSlice";
+import { useCheckout } from "../hooks/useCheckout";
 
 const CartScreen = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { proceedToCheckout } = useCheckout();
 
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
@@ -38,7 +40,7 @@ const CartScreen = () => {
   };
 
   const checkoutHandler = () => {
-    navigate("/login?redirect=/shipping");
+    proceedToCheckout();
   };
 
   return (

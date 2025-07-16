@@ -2,6 +2,7 @@ import path from "path";
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 dotenv.config();
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
@@ -16,10 +17,29 @@ connectDB(); // Connect to MongoDB
 
 const app = express();
 
+// CORS configuration for production
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    cors({
+      origin: process.env.FRONTEND_URL || true,
+      credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    })
+  );
+} else {
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+}
+
 app.use(express.json()); // Middleware to parse JSON requests
 app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-encoded data
 
-// Middleware to parse cookies
+// Middleware to parse cookies with secure settings
 app.use(cookieParser());
 
 app.use("/api/products", productRoutes);
@@ -38,7 +58,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "frontend", "build")));
 
+  // Catch-all handler: send back React's index.html file for non-API routes
   app.get("*", (req, res) => {
+    // Don't catch API routes
+    if (req.originalUrl.startsWith("/api")) {
+      return res.status(404).json({ message: "API route not found" });
+    }
     res.sendFile(path.join(__dirname, "frontend", "build", "index.html"));
   });
 } else {

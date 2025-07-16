@@ -8,7 +8,10 @@ const PrivateRoute = () => {
   return userInfo ? (
     <Outlet />
   ) : (
-    <Navigate to={`/login?redirect=${location.pathname}`} replace />
+    <Navigate
+      to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
+      replace
+    />
   );
 };
 
