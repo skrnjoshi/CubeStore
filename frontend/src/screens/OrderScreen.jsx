@@ -55,7 +55,7 @@ const OrderScreen = () => {
   function onApprove(data, actions) {
     return actions.order.capture().then(async function (details) {
       try {
-        await payOrder({ orderId, details });
+        await payOrder({ orderId, details }).unwrap();
         refetch();
         toast.success("Order is paid");
       } catch (err) {
@@ -188,7 +188,7 @@ const OrderScreen = () => {
         </Col>
         <Col md={4}>
           <Card>
-            <ListGroup variant="flush">
+            <ListGroup variant="flush" className="order-summary-list">
               <ListGroup.Item>
                 <h2>Order Summary</h2>
               </ListGroup.Item>

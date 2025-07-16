@@ -86,7 +86,7 @@ const ProductEditScreen = () => {
       </Link>
 
       <FormContainer>
-        {error && <Message variant="danger">{error}</Message>}
+        {error && <Message variant="danger">{error.data.message}</Message>}
         {isLoading && <Loader />}
         <h1>Edit Product</h1>
         {loadingUpdate && <Loader />}

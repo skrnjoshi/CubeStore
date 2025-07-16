@@ -129,7 +129,7 @@ const PlaceOrderScreen = () => {
                   <Col>${cart.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
+              <ListGroup.Item className="border-0">
                 {error && (
                   <Message variant="danger">{error.data.message}</Message>
                 )}
@@ -137,7 +137,7 @@ const PlaceOrderScreen = () => {
               <ListGroup.Item>
                 <Button
                   type="button"
-                  className="btn-block"
+                  className="btn-block "
                   disabled={cart.cartItems === 0}
                   onClick={placeOrderHandler}
                 >
