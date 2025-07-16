@@ -32,10 +32,11 @@ import ProductEditScreen from "./screens/admin/ProductEditScreen.jsx";
 import UserListScreen from "./screens/admin/UserListScreen.jsx"; // Import UserListScreen
 import UserEditScreen from "./screens/admin/UserEditScreen.jsx";
 import { HelmetProvider } from "@dr.pogodin/react-helmet"; // Import Helmet for SEO
+import ErrorPage from "./components/ErrorPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route path="/" element={<App />} errorElement={<ErrorPage />}>
       {" "}
       {/* Main App layout */}
       {/* Public Routes */}
