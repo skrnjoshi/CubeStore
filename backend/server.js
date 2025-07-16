@@ -22,14 +22,10 @@ app.use(express.urlencoded({ extended: true })); // Middleware to parse URL-enco
 // Middleware to parse cookies
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
-
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/uploads", uploadRoutes); // Serve static files from the uploads directory
+app.use("/api/uploads", uploadRoutes);
 
 app.use("/api/config/paypal", (req, res) => {
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID });
@@ -53,6 +49,17 @@ if (process.env.NODE_ENV === "production") {
 
 app.use(notFound); // Middleware for handling 404 errors
 app.use(errorHandler); // Middleware for handling errors
+
+// Add error handling for uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  process.exit(1);
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
